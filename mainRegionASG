@@ -1,0 +1,29 @@
+import boto3
+import json
+
+client = boto3.client('autoscaling')
+client2 = boto3.client('autoscaling',region_name='us-east-2')
+
+def lambda_handler(event, context):
+  print("event string is",event)
+  #将event变成string
+  event_string=json.dumps(event)
+  print("spot" in event_string)
+  
+  if ("spot" in event_string):
+    virginiaAsg = client.put_scaling_policy(
+      AutoScalingGroupName='test',
+      PolicyName='11',
+      PolicyType = 'SimpleScaling',
+      AdjustmentType ='PercentChangeInCapacity',
+      ScalingAdjustment=0,
+      Enabled=False
+  )
+    ohioAsg = client2.put_scaling_policy(
+      AutoScalingGroupName='ohioAutoScaling',
+      PolicyName='ohioAutoScaling',
+      PolicyType = 'SimpleScaling',
+      AdjustmentType ='PercentChangeInCapacity',
+      ScalingAdjustment=0,
+      Enabled=True
+  )
